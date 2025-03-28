@@ -79,8 +79,11 @@ func Init() {
 	ready.Add(1)
 	go gasNowUpdater(ready)
 
-	ready.Add(1)
-	go ethStoreStatisticsDataUpdater(ready)
+	// Temporary Fix
+	if (utils.Config.Chain.Id == 1) {
+		ready.Add(1)
+		go ethStoreStatisticsDataUpdater(ready)
+	}
 
 	ready.Add(1)
 	go startMonitoringService(ready)
