@@ -668,7 +668,7 @@ func queueEmailNotifications(notificationsByUserID map[uint64]map[types.EventNam
 					event_title = "income_history"
 				}
 				msg.Body += template.HTML(fmt.Sprintf("%s<br>====<br><br>", types.EventLabel[event_title]))
-				unsubURL := "https://" + utils.Config.Frontend.SiteDomain + "/notifications/unsubscribe"
+				unsubURL := utils.Config.Frontend.SiteDomain + "/notifications/unsubscribe"
 				for i, n := range ns {
 					// Find all unique notification titles for the subject
 					title := n.GetTitle()
