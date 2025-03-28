@@ -16,6 +16,9 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+COPY --from=build-env /src/templates /app/templates
+COPY --from=build-env /src/static /app/static
 COPY --from=build-env /src/bin /app/
 COPY --from=build-env /src/config /app/config
-CMD ["./explorer", "--config", "./config/default.config.yml"]
+COPY --from=build-env /src/config.yaml /app/config/
+CMD ["./explorer", "--config", "./config/config.yaml"]
