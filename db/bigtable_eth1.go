@@ -703,6 +703,16 @@ func (bigtable *Bigtable) IndexEventsWithTransformers(start, end int64, transfor
 						if err != nil {
 							logrus.WithError(err).Errorf("error transforming block [%v]", block.Number)
 						}
+						// Check if mutsData is valid before using it
+						if mutsData == nil {
+							// logrus.Error("mutsData is nil from transform function [%v]", block.Number)
+							continue
+						}
+
+						if mutsData.Keys == nil || mutsData.Muts == nil {
+							// logrus.Error("mutsData contains nil Keys or Muts [%v]", block.Number)
+							continue
+						}
 						bulkMutsData.Keys = append(bulkMutsData.Keys, mutsData.Keys...)
 						bulkMutsData.Muts = append(bulkMutsData.Muts, mutsData.Muts...)
 

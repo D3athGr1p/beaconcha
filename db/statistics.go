@@ -83,6 +83,16 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 	if err != nil {
 		return err
 	}
+
+	// Also query the max validator index from the database to ensure we don't miss any validators
+	var dbMaxValidatorIndex uint64
+	err = WriterDb.Get(&dbMaxValidatorIndex, `SELECT COALESCE(MAX(validatorindex), 0) FROM validators`)
+	if err != nil {
+		logger.Warnf("Error retrieving max validator index from db: %v, using maxValidatorIndex from BigTable: %d", err, maxValidatorIndex)
+	} else if dbMaxValidatorIndex > maxValidatorIndex {
+		logger.Infof("Using max validator index from db: %d instead of %d from BigTable", dbMaxValidatorIndex, maxValidatorIndex)
+		maxValidatorIndex = dbMaxValidatorIndex
+	}
 	validators := make([]uint64, 0, maxValidatorIndex)
 	validatorData := make([]*types.ValidatorStatsTableDbRow, 0, maxValidatorIndex)
 	validatorDataMux := &sync.Mutex{}
@@ -803,6 +813,14 @@ func gatherValidatorBalances(client rpc.Client, day uint64, data []*types.Valida
 
 	mux.Lock()
 	for _, stat := range firstEpochBalances.Data {
+		// if int(stat.Index) >= len(data) {
+		// 	logger.Printf("firstEpochBalances.Data out-of-range ValidatorIndex: %+v (data length: %d)", stat, len(data))
+		// 	if stat.Index < 63 {
+		// 		data[stat.Index].StartBalance = 100000000000000
+		// 		data[stat.Index].DepositsAmount = 100000000000000
+		// 	}
+		// 	continue
+		// }
 		data[stat.Index].StartBalance = int64(stat.Balance)
 		data[stat.Index].StartEffectiveBalance = int64(stat.Validator.EffectiveBalance)
 	}
@@ -860,6 +878,19 @@ func gatherValidatorDepositWithdrawals(day uint64, data []*types.ValidatorStatsT
 
 	mux.Lock()
 	for _, r := range resDeposits {
+		if int(r.ValidatorIndex) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(r.ValidatorIndex) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d", currentLen, newSize, r.ValidatorIndex)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[r.ValidatorIndex].Deposits = int64(r.Deposits)
 		data[r.ValidatorIndex].DepositsAmount = int64(r.DepositsAmount)
 	}
@@ -884,6 +915,19 @@ func gatherValidatorDepositWithdrawals(day uint64, data []*types.ValidatorStatsT
 
 	mux.Lock()
 	for _, r := range resWithdrawals {
+		if int(r.ValidatorIndex) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(r.ValidatorIndex) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d in withdrawals", currentLen, newSize, r.ValidatorIndex)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[r.ValidatorIndex].Withdrawals = int64(r.Withdrawals)
 		data[r.ValidatorIndex].WithdrawalsAmount = int64(r.WithdrawalsAmount)
 	}
