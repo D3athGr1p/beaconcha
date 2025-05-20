@@ -235,7 +235,7 @@ func GetPrice(a, b string) float64 {
 	}
 	price, exists := prices[a+"/"+b]
 	if !exists {
-		logrus.WithFields(logrus.Fields{"pair": a + "/" + b}).Warnf("price pair not found")
+		// logrus.WithFields(logrus.Fields{"pair": a + "/" + b}).Warnf("price pair not found")
 		return 1
 	}
 	return price

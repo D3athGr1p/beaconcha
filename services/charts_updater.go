@@ -800,9 +800,9 @@ func depositsChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Deposits",
-		Subtitle:     "Daily Amount of deposited ETH.",
+		Subtitle:     "Daily Amount of deposited BLOCX.",
 		XAxisTitle:   "Income",
-		YAxisTitle:   "Deposited ETH",
+		YAxisTitle:   "Deposited BLOCX",
 		StackingMode: "normal",
 		Type:         "column",
 		Series: []*types.GenericChartDataSeries{
@@ -999,7 +999,7 @@ func BurnedFeesChartData() (*types.GenericChartData, error) {
 		Title:                           "Burned Fees",
 		Subtitle:                        "Evolution of the total number of Ether burned with EIP 1559",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Burned Fees [ETH]",
+		YAxisTitle:                      "Burned Fees [BLOCX]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",
@@ -1195,7 +1195,7 @@ func TotalEmissionChartData() (*types.GenericChartData, error) {
 		Title:                           "Total Ether Supply",
 		Subtitle:                        "Evolution of the total Ether supply",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Total Supply [ETH]",
+		YAxisTitle:                      "Total Supply [BLOCX]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",

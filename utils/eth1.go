@@ -341,8 +341,10 @@ func formatAmount(amount *big.Int, unit string, digits int, maxPreCommaDigitsBef
 	displayUnit := " " + unit
 	var unitDigits int
 	if unit == "ETH" || unit == "Ether" || unit == "xDAI" || unit == "GNO" {
+		displayUnit = " BLOCX"
 		unitDigits = 18
 	} else if unit == "GWei" {
+		displayUnit = " mlBLOCX"
 		unitDigits = 9
 	} else {
 		displayUnit = " ?"

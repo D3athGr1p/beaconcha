@@ -1,32 +1,29 @@
-# Database credentials
 database:
   user: "user"
+  user: "user"
   name: "db"
-  host: "172.29.0.2"
+  host: "postgres"
   port: "5432"
   password: "pass"
-# Chain network configuration
 chain:
-  name: akelu
-  id: 9513
+  name: BLOCX
+  id: 86996
   clConfigPath: node
-  elConfigPath: "./local-deployment/network-params.json"
-  configPath: "./config/mainnet.chain.yml"
-  genesisTimestamp: 1742818532
+  elConfigPath: "/explorer-configs/network-params.json"
+  configPath: "/explorer-configs/config.yaml"
+  genesisTimestamp: 1741416415
   clConfig:
-    configName: "akelu"
+    configName: "BLOCX"
     slotsPerEpoch: 32
     secondsPerSlot: 3
-    depositChainID: 9513
-# Note: It is possible to run either the frontend or the indexer or both at the same time
-# Frontend config
+    depositChainID: 86996
 frontend:
   enabled: true # Enable or disable to web frontend
   debug: true
-  imprint: "./imprint.html"  # Path to the imprint page content
+  # imprint: "./imprint.html"  
   siteDomain: "http://localhost:8080"
-  siteName: "Kintsugi Explorer" # Name of the site, displayed in the title tag
-  siteSubtitle: "Kintsugi explorer" # Subtitle shown on the main page
+  siteName: "BLOCX. Validator Explorer" 
+  siteSubtitle: "BLOCX. Validator explorer" 
   csrfAuthKey: '0123456789abcdef000000000000000000000000000000000000000000000000'
   jwtSigningSecret: "0123456789abcdef000000000000000000000000000000000000000000000000"
   jwtIssuer: "localblockexplorer"
@@ -34,72 +31,67 @@ frontend:
   sessionSecret: "11111111111111111111111111111111"
   # elCurrency: "ETH"
   # clCurrency: "ETH"
-  # clCurrencyDivisor: 18
-  # elCurrencyDivisor: 18
+  # clCurrencyDivisor: 64
+  # elCurrencyDivisor: 64
   mainCurrency: "ETH"
   slotViz:
     enabled: true
     hardforkEpoch: 0
   server:
-    host: "0.0.0.0" # Address to listen on
-    port: "8080" # Port to listen on
+    host: "0.0.0.0" 
+    port: "8080" 
   database:
     user: "user"
     name: "db"
-    host: "172.29.0.2"
+    host: "postgres"
     port: "5432"
     password: "pass"
   readerDatabase:
     user: "user"
     name: "db"
-    host: "172.29.0.2"
+    host: "postgres"
     port: "5432"
     password: "pass"
   writerDatabase:
     user: "user"
     name: "db"
-    host: "172.29.0.2"
+    host: "postgres"
     port: "5432"
     password: "pass"
 
 readerDatabase:
   user: "user"
   name: "db"
-  host: "172.29.0.2"
+  host: "postgres"
   port: "5432"
   password: "pass"
 writerDatabase:
   user: "user"
   name: "db"
-  host: "172.29.0.2"
+  host: "postgres"
   port: "5432"
   password: "pass"
 bigtable:
   project: explorer
   instance: explorer
   emulator: true
-  emulatorHost: 172.29.0.3
+  emulatorHost: lbt
   emulatorPort: 9000
-  # flashSecret: "" # Encryption secret for flash cookies
-# Indexer config
 indexer:
-  enabled: true # Enable or disable the indexing service
-  # fullIndexOnStartup: true # Perform a one time full db index on startup
-  # indexMissingEpochsOnStartup: true # Check for missing epochs and export them after startup
+  enabled: true 
+  indexMissingEpochsOnStartup: true 
   node:
-    host: "172.19.0.3" # Address of the backend node
-    port: "5052" # GRPC port of the Prysm node
-    type: "lighthouse" # can be either prysm or lighthouse
-    pageSize: 100 # the amount of entries to fetch per paged rpc call, TODO set to 500
-  eth1Endpoint: 'http://172.19.0.2:8545'
+    host: "209.145.57.126" 
+    port: "5052" 
+    type: "lighthouse" 
+    pageSize: 100 
+  eth1Endpoint: 'http://209.145.57.126:8545'
   eth1DepositContractFirstBlock: 0
-eth1ErigonEndpoint: http://172.19.0.2:8545
-eth1GethEndpoint: http://172.19.0.2:8545
-redisCacheEndpoint: '172.29.0.4:6379'
-redisSessionStoreEndpoint: '172.29.0.4:6379'
+eth1ErigonEndpoint: http://209.145.57.126:8545
+eth1GethEndpoint: http://209.145.57.126:8545
+redisCacheEndpoint: 'redis:6379'
+redisSessionStoreEndpoint: 'redis:6379'
 tieredCacheProvider: 'redis'
-  # Note: 0 is correct, but due to an underflow bug (being fixed), doesn't work.
-
 monitoring:
   enabled: true
   serviceMonitoringConfigurations:
@@ -139,6 +131,6 @@ monitoring:
       duration: 1s
 
 
-ratelimitUpdater:
-  enabled: true
-  updateInterval: 5s
+# ratelimitUpdater:
+#   enabled: true
+#   updateInterval: 5s

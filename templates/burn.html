@@ -78,10 +78,10 @@
                         return this.points.reduce(function (s, point) {
                             let val = point.y;
                             if (point.series.name === "Burned") {
-                                val = (val / 1e18).toFixed(1) + " <b>ETH</b>";
+                                val = (val / 1e18).toFixed(1) + " <b>BLOCX</b>";
                             }
                             if (point.series.name === "Base fee") {
-                                val = (val / 1e9).toFixed(1) + " <b>GWei</b>";
+                                val = (val / 1e9).toFixed(1) + " <b>mlBLOCX</b>";
                             }
 
                             return s + '<br/>' + point.series.name + ': ' +
@@ -124,7 +124,7 @@
                 },
 
                 title: {
-                    text: 'Current ETH Emission'
+                    text: 'Current BLOCX Emission'
                 },
                 navigator: {
                     enabled: false,
@@ -319,6 +319,7 @@
       justify-content: center;
       margin: 1rem 0;
       flex-wrap: wrap;
+      display: none;
     }
 
     .hero-image {
@@ -463,7 +464,7 @@
 {{ define "content" }}
   <div class="container mt-2">
     <div id="app" v-cloak>
-      <div class="hero-container my-5">
+      <!-- <div class="hero-container my-5">
         <div class="hero-image">
           <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 207.9572 154.65448" version="1.1" id="svg5" inkscape:version="1.0.2 (e86c8708, 2021-01-15)" sodipodi:docname="drawing_final_resize.svg">
             <metadata id="metadata3892">
@@ -704,7 +705,7 @@
           <h1 class="mt-4 text-center">Watch as ETH gets burned with EIP-1559</h1>
           <h5 class="text-center">In total ${ page.total_burned | formatETH(1) } ETH have been burned up to now.</h5>
         </div>
-      </div>
+      </div> -->
       <div id="r-banner" info="{{ .Meta.Templates }}"></div>
       <div class="card mt-3">
         <div class="card-header">
@@ -716,7 +717,7 @@
                     <span><i class="fas fa-gas-pump mr-1"></i>Base fee</span>
                   </div>
                   <h5 class="font-weight-normal mb-0">
-                    <span data-toggle="tooltip" data-placement="top" title="The current network base fee" class="mr-3">${ page.blocks[0].base_fee_per_gas | formatGWei(1) }</span> <span style="font-size: .9rem; opacity: .8; font-weight: 300;">GWei</span> <span v-if="page.base_fee_trend === 1" data-toggle="tooltip" data-placement="top" title="Base fee is increasing">⬈</span><span v-if="page.base_fee_trend === -1" data-toggle="tooltip" data-placement="top" title="Base fee is decreasing">⬊</span>
+                    <span data-toggle="tooltip" data-placement="top" title="The current network base fee" class="mr-3">${ page.blocks[0].base_fee_per_gas | formatGWei(1) }</span> <span style="font-size: .9rem; opacity: .8; font-weight: 300;">mlBLOCX</span> <span v-if="page.base_fee_trend === 1" data-toggle="tooltip" data-placement="top" title="Base fee is increasing">⬈</span><span v-if="page.base_fee_trend === -1" data-toggle="tooltip" data-placement="top" title="Base fee is decreasing">⬊</span>
                     <span data-toggle="tooltip" data-placement="top" title="Base fee is stable" v-if="page.base_fee_trend === 0">—</span>
                   </h5>
                 </div>
@@ -724,7 +725,7 @@
                   <div class="text-secondary mb-0"><i class="fas fa-burn mr-1"></i>Total burned</div>
                   <h5 class="font-weight-normal mb-0">
                     <div>
-                      <span data-toggle="tooltip" data-placement="top" title="">${ page.total_burned | formatETH(1) } <span style="font-size: .9rem; opacity: .8; font-weight: 300;">ETH</span></span>
+                      <span data-toggle="tooltip" data-placement="top" title="">${ page.total_burned | formatETH(1) } <span style="font-size: .9rem; opacity: .8; font-weight: 300;">BLOCX</span></span>
                     </div>
                     {{ if .Mainnet }}<div><span style="font-size: .8rem; opacity: .5">${ (page.total_burned / 1e18 * page.price_usd) | formatUSD }</span></div>{{ end }}
                   </h5>
@@ -736,14 +737,14 @@
                 <div class="p-2">
                   <div class="text-secondary mb-0"><i class="fas fa-fire mr-1"></i>Burn rate (1h)</div>
                   <h5 class="font-weight-normal mb-0">
-                    <span data-toggle="tooltip" data-placement="top" title="">${ page.burn_rate_1_h | formatETH(2) } <span style="font-size: .9rem; opacity: .8; font-weight: 300;">ETH/min</span></span>
+                    <span data-toggle="tooltip" data-placement="top" title="">${ page.burn_rate_1_h | formatETH(2) } <span style="font-size: .9rem; opacity: .8; font-weight: 300;">BLOCX/min</span></span>
                   </h5>
                   {{ if .Mainnet }}<div><span style="font-size: .8rem; opacity: .5">${ (page.burn_rate_1_h / 1e18 * page.price_usd) | formatUSD } / min</span></div>{{ end }}
                 </div>
                 <div class="text-right p-2">
                   <div class="text-secondary mb-0"><i class="fas fa-fire-alt mr-1"></i>Burn rate (24h)</div>
                   <h5 class="font-weight-normal mb-0">
-                    <span data-toggle="tooltip" data-placement="top" title="">${ page.burn_rate_24_h | formatETH(2) } <span style="font-size: .9rem; opacity: .8; font-weight: 300;">ETH/min</span></span>
+                    <span data-toggle="tooltip" data-placement="top" title="">${ page.burn_rate_24_h | formatETH(2) } <span style="font-size: .9rem; opacity: .8; font-weight: 300;">BLOCX/min</span></span>
                   </h5>
                   {{ if .Mainnet }}<div><span style="font-size: .8rem; opacity: .5">${ (page.burn_rate_24_h / 1e18 * page.price_usd) | formatUSD } / min</span></div>{{ end }}
                 </div>
@@ -804,7 +805,7 @@
                   <th>Txs</th>
                   <th>Age</th>
                   <th>Base Fee</th>
-                  <th>Burned ETH</th>
+                  <th>Burned BLOCX</th>
                 </tr>
               </thead>
               <tbody>
@@ -812,11 +813,11 @@
                   <td><a v-bind:href="'/block/0x' + block.hash">${ block.number }</a></td>
                   <td>${ block.gas_target }</td>
                   <td>${ block.gas_used }</td>
-                  <td><span class="badge badge-pill text-white badge-success">${ block.mining_reward | formatETH(5)} ETH</span></td>
+                  <td><span class="badge badge-pill text-white badge-success">${ block.mining_reward | formatETH(5)} BLOCX</span></td>
                   <td>${ block.tx_count }</td>
                   <td><span data-toggle="tooltip" data-placement="top" v-bind:data-original-title="block.time | timestampTooltip">${ block.time | fromNow }</span></td>
-                  <td><span class="badge badge-pill text-white badge-info">${ block.base_fee_per_gas | formatGWei(2)} GWei</span></td>
-                  <td><span class="badge badge-pill text-white badge-warning">${ block.burned_fees | formatETH(5)} ETH</span></td>
+                  <td><span class="badge badge-pill text-white badge-info">${ block.base_fee_per_gas | formatGWei(2)} mlBLOCX</span></td>
+                  <td><span class="badge badge-pill text-white badge-warning">${ block.burned_fees | formatETH(5)} BLOCX</span></td>
                 </tr>
               </tbody>
             </table>

@@ -130,6 +130,7 @@ func genesisDepositsExporter(client rpc.Client) {
 			continue
 		}
 
+		logger.Infof("1111111111111111111111111111111111111111111111111")
 		// check if genesis-deposits have already been exported
 		var genesisDepositsCount uint64
 		err = db.WriterDb.Get(&genesisDepositsCount, "SELECT COUNT(*) FROM blocks_deposits WHERE block_slot=0")
@@ -144,6 +145,7 @@ func genesisDepositsExporter(client rpc.Client) {
 			return
 		}
 
+		logger.Infof("333333333333333333333333333333333333333333333333333")
 		genesisValidators, err := client.GetValidatorState(0)
 		if err != nil {
 			logger.Errorf("error retrieving genesis validator data for genesis-epoch when exporting genesis-deposits: %v", err)
@@ -151,6 +153,7 @@ func genesisDepositsExporter(client rpc.Client) {
 			continue
 		}
 
+		logger.Infof("44444444444444444444444444444444444444444444444444444")
 		tx, err := db.WriterDb.Beginx()
 		if err != nil {
 			logger.Errorf("error beginning db-tx when exporting genesis-deposits: %v", err)
