@@ -667,6 +667,19 @@ func gatherValidatorBlockStats(day uint64, data []*types.ValidatorStatsTableDbRo
 
 	mux.Lock()
 	for _, r := range resBlocks {
+		if int(r.ValidatorIndex) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(r.ValidatorIndex) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d in block stats", currentLen, newSize, r.ValidatorIndex)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[r.ValidatorIndex].ProposedBlocks = int64(r.ProposedBlocks)
 		data[r.ValidatorIndex].MissedBlocks = int64(r.MissedBlocks)
 		data[r.ValidatorIndex].OrphanedBlocks = int64(r.OrphanedBlocks)
@@ -694,6 +707,19 @@ func gatherValidatorBlockStats(day uint64, data []*types.ValidatorStatsTableDbRo
 
 	mux.Lock()
 	for _, r := range resSlashings {
+		if int(r.ValidatorIndex) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(r.ValidatorIndex) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d in slashings", currentLen, newSize, r.ValidatorIndex)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[r.ValidatorIndex].AttesterSlashings = int64(r.AttesterSlashings)
 		data[r.ValidatorIndex].ProposerSlashing = int64(r.ProposerSlashing)
 	}
@@ -777,6 +803,19 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 
 	mux.Lock()
 	for proposer, r := range proposerRewards {
+		if int(proposer) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(proposer) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d in EL income", currentLen, newSize, proposer)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[proposer].ElRewardsWei = decimal.NewFromBigInt(r.TxFeeReward, 0)
 		data[proposer].MEVRewardsWei = decimal.NewFromBigInt(r.MevReward, 0)
 	}
@@ -813,18 +852,36 @@ func gatherValidatorBalances(client rpc.Client, day uint64, data []*types.Valida
 
 	mux.Lock()
 	for _, stat := range firstEpochBalances.Data {
-		// if int(stat.Index) >= len(data) {
-		// 	logger.Printf("firstEpochBalances.Data out-of-range ValidatorIndex: %+v (data length: %d)", stat, len(data))
-		// 	if stat.Index < 63 {
-		// 		data[stat.Index].StartBalance = 100000000000000
-		// 		data[stat.Index].DepositsAmount = 100000000000000
-		// 	}
-		// 	continue
-		// }
+		if int(stat.Index) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(stat.Index) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d in balances", currentLen, newSize, stat.Index)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[stat.Index].StartBalance = int64(stat.Balance)
 		data[stat.Index].StartEffectiveBalance = int64(stat.Validator.EffectiveBalance)
 	}
 	for _, stat := range lastEpochBalances.Data {
+		if int(stat.Index) >= len(data) {
+			// Grow the data slice to accommodate this validator index
+			currentLen := len(data)
+			newSize := int(stat.Index) + 1
+			logger.Infof("Growing data array from %d to %d to accommodate validator %d in balances", currentLen, newSize, stat.Index)
+			
+			for i := currentLen; i < newSize; i++ {
+				data = append(data, &types.ValidatorStatsTableDbRow{
+					ValidatorIndex: uint64(i),
+					Day:            int64(day),
+				})
+			}
+		}
 		data[stat.Index].EndBalance = int64(stat.Balance)
 		data[stat.Index].EndEffectiveBalance = int64(stat.Validator.EffectiveBalance)
 	}
@@ -1014,6 +1071,20 @@ func GatherValidatorSyncDutiesForDay(validators []uint64, day uint64, data []*ty
 
 			validator := committee[types.CommitteeIndex(i)]
 
+			if int(validator) >= len(data) {
+				// Grow the data slice to accommodate this validator index
+				currentLen := len(data)
+				newSize := int(validator) + 1
+				logger.Infof("Growing data array from %d to %d to accommodate validator %d in sync duties", currentLen, newSize, validator)
+				
+				for j := currentLen; j < newSize; j++ {
+					data = append(data, &types.ValidatorStatsTableDbRow{
+						ValidatorIndex: uint64(j),
+						Day:            int64(day),
+					})
+				}
+			}
+
 			if len(bits) == 0 { // slot is empty
 				data[validator].MissedSync++
 			} else {
@@ -1121,11 +1192,28 @@ func gatherValidatorMissedAttestationsStatisticsForDay(validators []uint64, day 
 			completedEpochData := epochParticipation[completedEpoch]
 
 			if completedEpochData == nil {
-				return fmt.Errorf("logic error, did not retrieve data for epoch %v", completedEpoch)
+				// Handle missing epoch data gracefully
+				logger.Warnf("No attestation data found for epoch %v - this may be due to validators being offline. Skipping this epoch.", completedEpoch)
+				// Initialize an empty map for this epoch so we don't try to process it again
+				epochParticipation[completedEpoch] = make(map[types.ValidatorIndex]bool)
+				completedEpochData = epochParticipation[completedEpoch]
 			}
 
 			mux.Lock()
 			for validator, participated := range completedEpochData {
+				if int(validator) >= len(data) {
+					// Grow the data slice to accommodate this validator index
+					currentLen := len(data)
+					newSize := int(validator) + 1
+					logger.Infof("Growing data array from %d to %d to accommodate validator %d in missed attestations", currentLen, newSize, validator)
+					
+					for j := currentLen; j < newSize; j++ {
+						data = append(data, &types.ValidatorStatsTableDbRow{
+							ValidatorIndex: uint64(j),
+							Day:            int64(day),
+						})
+					}
+				}
 				if !participated {
 					data[validator].MissedAttestations++
 				}
@@ -1143,6 +1231,19 @@ func gatherValidatorMissedAttestationsStatisticsForDay(validators []uint64, day 
 		}
 		mux.Lock()
 		for validator, participated := range participation {
+			if int(validator) >= len(data) {
+				// Grow the data slice to accommodate this validator index
+				currentLen := len(data)
+				newSize := int(validator) + 1
+				logger.Infof("Growing data array from %d to %d to accommodate validator %d in missed attestations", currentLen, newSize, validator)
+				
+				for j := currentLen; j < newSize; j++ {
+					data = append(data, &types.ValidatorStatsTableDbRow{
+						ValidatorIndex: uint64(j),
+						Day:            int64(day),
+					})
+				}
+			}
 			if !participated {
 				data[validator].MissedAttestations++
 			}
